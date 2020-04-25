@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2019-12-09 20:42:08
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-04-25 15:35:25
+ * @Last Modified time: 2020-04-25 18:45:45
  * @Description: 
  */
 "ui";
@@ -50,7 +50,7 @@ let default_config = {
   device_width: device.width,
   device_height: device.height
 }
-const CONFIG_STORAGE_NAME = 'autoscript_version'
+const CONFIG_STORAGE_NAME = 'alipay_credits_version'
 let config = {}
 let storageConfig = storages.create(CONFIG_STORAGE_NAME)
 Object.keys(default_config).forEach(key => {
