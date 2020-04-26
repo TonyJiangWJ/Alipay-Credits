@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2019-12-23 22:54:22
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-04-25 15:24:56
+ * @Last Modified time: 2020-04-27 00:20:41
  * @Description: 
  */
 
@@ -13,8 +13,7 @@ let loadingDialog = null
 importClass(com.tony.Downloader)
 importClass(com.tony.DownloaderListener)
 
-let apiUrl = 'github release api地址'
-// let apiUrl = 'https://api.github.com/repos/TonyJiangWJ/Ant-Forest/releases/latest'
+let apiUrl = 'https://api.github.com/repos/TonyJiangWJ/Alipay-Credits/releases/latest'
 let targetOutputDir = FileUtils.getRealMainScriptPath(true)
 let downloader = new Downloader()
 log('下载并解压文件到目录：' + targetOutputDir)
