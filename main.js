@@ -7,11 +7,10 @@
 let { config } = require('./config.js')(runtime, this)
 let singletoneRequire = require('./lib/SingletonRequirer.js')(runtime, this)
 let runningQueueDispatcher = singletoneRequire('RunningQueueDispatcher')
-let { logInfo, errorInfo } = singletoneRequire('LogUtils')
+let { logInfo, errorInfo, warnInfo, debugInfo, infoLog } = singletoneRequire('LogUtils')
 let commonFunctions = singletoneRequire('CommonFunction')
-let unlocker = require('./lib/Unlock.js')
 let automator = singletoneRequire('Automator')
-let { tryRequestScreenCapture } = require('./lib/TryRequestScreenCapture.js')
+let unlocker = require('./lib/Unlock.js')
 let creditRunner = require('./core/CreditRunner.js')
 // 不管其他脚本是否在运行 清除任务队列 适合只使用蚂蚁森林的用户
 if (config.single_script) {
@@ -56,27 +55,11 @@ try {
 }
 logInfo('解锁成功')
 
-// 请求截图权限
-let screenPermission = false
-let actionSuccess = commonFunctions.waitFor(function () {
-  if (config.request_capture_permission) {
-    screenPermission = tryRequestScreenCapture()
-  } else {
-    screenPermission = requestScreenCapture(false)
-  }
-}, 15000)
-if (!actionSuccess || !screenPermission) {
-  errorInfo('请求截图失败, 设置6秒后重启')
-  runningQueueDispatcher.removeRunningTask()
-  commonFunctions.setUpAutoStart(0.1)
-  exit()
-} else {
-  logInfo('请求截屏权限成功')
-}
 /************************
  * 主程序
  ***********************/
 commonFunctions.showDialogAndWait(true)
+commonFunctions.listenDelayStart()
 if (config.develop_mode) {
   creditRunner.exec()
 } else {
@@ -92,6 +75,7 @@ if (config.auto_lock === true && unlocker.needRelock() === true) {
   debugInfo('重新锁定屏幕')
   automator.lockScreen()
 }
-// 展示调用次数
-singletoneRequire('CommonFunction', true)
+events.removeAllListeners()
+events.recycle()
 runningQueueDispatcher.removeRunningTask(true)
+exit()
