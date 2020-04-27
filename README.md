@@ -1,8 +1,6 @@
 
 # 蚂蚁积分签到
 
-
-
 ## 其他脚本
 
 - [蚂蚁森林脚本传送门](https://github.com/TonyJiangWJ/Ant-Forest)
@@ -10,6 +8,7 @@
 - [京东签到脚本传送门](https://github.com/TonyJiangWJ/JingDongBeans)
 
 ## 基于AutoJS实现的自动领取支付宝积分脚本
+
 - 每日领取支付宝积分
 
 ## 使用说明
@@ -40,4 +39,21 @@ module.exports = function (obj) {
   }
 
 }
+```
+
+## 添加自定义锁屏代码
+
+- 同解锁设备，在extends文件夹下创建LockScreen.js，内容可以参考LockScreen-demo.js 实现自定义解锁
+
+```javascript
+  let { config: _config } = require('../config.js')(runtime, this)
+
+  module.exports = function () {
+    // MIUI 12 偏右上角下拉新控制中心
+    swipe(800, 10, 800, 1000, 500)
+    // 等待动画执行完毕
+    sleep(500)
+    // 点击锁屏按钮
+    click(parseInt(_config.lock_x), parseInt(_config.lock_y))
+  }
 ```
