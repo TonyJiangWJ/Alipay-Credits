@@ -7,12 +7,12 @@
  */
 
 let { config } = require('../config.js')(runtime, this)
-let singletoneRequire = require('../lib/SingletonRequirer.js')(runtime, this)
-let commonFunctions = singletoneRequire('CommonFunction')
-let alipayUnlocker = singletoneRequire('AlipayUnlocker')
-let widgetUtils = singletoneRequire('WidgetUtils')
-let logUtils = singletoneRequire('LogUtils')
-let automator = singletoneRequire('Automator')
+let singletonRequire = require('../lib/SingletonRequirer.js')(runtime, this)
+let commonFunctions = singletonRequire('CommonFunction')
+let alipayUnlocker = singletonRequire('AlipayUnlocker')
+let widgetUtils = singletonRequire('WidgetUtils')
+let logUtils = singletonRequire('LogUtils')
+let automator = singletonRequire('Automator')
 
 function CreditRunner () {
 

@@ -5,11 +5,11 @@
  * @Description: 
  */
 let { config } = require('./config.js')(runtime, this)
-let singletoneRequire = require('./lib/SingletonRequirer.js')(runtime, this)
-let runningQueueDispatcher = singletoneRequire('RunningQueueDispatcher')
-let { logInfo, errorInfo, warnInfo, debugInfo, infoLog } = singletoneRequire('LogUtils')
-let commonFunctions = singletoneRequire('CommonFunction')
-let automator = singletoneRequire('Automator')
+let singletonRequire = require('./lib/SingletonRequirer.js')(runtime, this)
+let runningQueueDispatcher = singletonRequire('RunningQueueDispatcher')
+let { logInfo, errorInfo, warnInfo, debugInfo, infoLog } = singletonRequire('LogUtils')
+let commonFunctions = singletonRequire('CommonFunction')
+let automator = singletonRequire('Automator')
 let unlocker = require('./lib/Unlock.js')
 let creditRunner = require('./core/CreditRunner.js')
 // 不管其他脚本是否在运行 清除任务队列 适合只使用蚂蚁森林的用户
