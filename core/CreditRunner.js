@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-04-25 18:33:37
+ * @Last Modified time: 2020-05-07 13:18:38
  * @Description: 
  */
 
@@ -32,6 +32,7 @@ function CreditRunner () {
     sleep(500)
     let confirm = widgetUtils.widgetGetOne(/^打开$/, 3000)
     if (confirm) {
+      sleep(500)
       automator.clickCenter(confirm)
     }
   }
@@ -73,12 +74,14 @@ function CreditRunner () {
     if (widgetUtils.widgetWaiting('做任务赚积分.*') && widgetUtils.widgetWaiting(_regex)) {
       // 等待稳定
       this.collectCredits('会员积分')
+      sleep(1000)
     } else {
       logUtils.logInfo(['未找到目标'], true)
     }
   }
 
   this.checkFamilyCredit = function () {
+    sleep(500)
     if (widgetUtils.widgetWaiting('.*家庭积分.*')) {
       let target = widgetUtils.widgetGetOne('.*家庭积分.*')
       automator.clickCenter(target)
