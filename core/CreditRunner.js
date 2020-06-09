@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-05-07 13:18:38
+ * @Last Modified time: 2020-06-09 09:17:12
  * @Description: 
  */
 
@@ -17,7 +17,8 @@ let automator = singletonRequire('Automator')
 function CreditRunner () {
 
   let _package_name = 'com.eg.android.AlipayGphone'
-  let _regex = /^\+(\d+)$/
+  let _family_regex = /^\+(\d+)$/
+  let _sign_regex = /^(\d+)$/
 
   this.openCreditPage = function () {
     commonFunctions.launchPackage(_package_name, false)
@@ -46,10 +47,10 @@ function CreditRunner () {
     }
   }
 
-  this.collectCredits = function (position) {
+  this.collectCredits = function (position, regex) {
     // 等待稳定
     sleep(1000)
-    let widgets = widgetUtils.widgetGetAll(_regex, null, true)
+    let widgets = widgetUtils.widgetGetAll(regex, null, true)
     if (widgets) {
       logUtils.logInfo(['总数：{}', widgets.target.length])
       let targets = widgets.target
@@ -62,7 +63,7 @@ function CreditRunner () {
           logUtils.logInfo([
             'value: {}', contentInfo
           ])
-          totalCollect += parseInt(_regex.exec(contentInfo)[1])
+          totalCollect += parseInt(regex.exec(contentInfo)[1])
           sleep(500)
         }
       })
@@ -71,9 +72,9 @@ function CreditRunner () {
   }
 
   this.checkAndCollect = function () {
-    if (widgetUtils.widgetWaiting('做任务赚积分.*') && widgetUtils.widgetWaiting(_regex)) {
+    if (widgetUtils.widgetWaiting('做任务赚积分.*') && widgetUtils.widgetWaiting(_sign_regex)) {
       // 等待稳定
-      this.collectCredits('会员积分')
+      this.collectCredits('会员积分', _sign_regex)
       sleep(1000)
     } else {
       logUtils.logInfo(['未找到目标'], true)
@@ -87,7 +88,7 @@ function CreditRunner () {
       automator.clickCenter(target)
       sleep(1000)
       if (widgetUtils.widgetWaiting(".*成员管理.*")) {
-        this.collectCredits('家庭积分')
+        this.collectCredits('家庭积分', _family_regex)
       } else {
         logUtils.logInfo(['未找到目标'], true)
       }
