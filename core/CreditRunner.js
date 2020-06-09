@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-06-09 09:17:12
+ * @Last Modified time: 2020-06-09 10:19:05
  * @Description: 
  */
 
@@ -72,25 +72,26 @@ function CreditRunner () {
   }
 
   this.checkAndCollect = function () {
-    if (widgetUtils.widgetWaiting('做任务赚积分.*') && widgetUtils.widgetWaiting(_sign_regex)) {
+    if (widgetUtils.widgetWaiting(_sign_regex)) {
       // 等待稳定
       this.collectCredits('会员积分', _sign_regex)
       sleep(1000)
     } else {
-      logUtils.logInfo(['未找到目标'], true)
+      logUtils.logInfo(['未找到待领取积分'], true)
     }
   }
 
   this.checkFamilyCredit = function () {
-    sleep(500)
+    sleep(1500)
     if (widgetUtils.widgetWaiting('.*家庭积分.*')) {
+      sleep(1000)
       let target = widgetUtils.widgetGetOne('.*家庭积分.*')
       automator.clickCenter(target)
       sleep(1000)
       if (widgetUtils.widgetWaiting(".*成员管理.*")) {
         this.collectCredits('家庭积分', _family_regex)
       } else {
-        logUtils.logInfo(['未找到目标'], true)
+        logUtils.logInfo(['未找到待领取家庭积分'], true)
       }
     }
   }
