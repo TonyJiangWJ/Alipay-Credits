@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-06-09 10:19:05
+ * @Last Modified time: 2020-06-29 13:13:04
  * @Description: 
  */
 
@@ -51,7 +51,7 @@ function CreditRunner () {
     // 等待稳定
     sleep(1000)
     let widgets = widgetUtils.widgetGetAll(regex, null, true)
-    if (widgets) {
+    while (widgets) {
       logUtils.logInfo(['总数：{}', widgets.target.length])
       let targets = widgets.target
       let isDesc = widgets.isDesc
@@ -68,6 +68,9 @@ function CreditRunner () {
         }
       })
       logUtils.infoLog(['{} 总共领取：「{}」分', position, totalCollect])
+      sleep(1000)
+      // 再次检测, 缩短检测超时时间为两秒
+      widgets = widgetUtils.widgetGetAll(regex, 2000, true)
     }
   }
 
@@ -84,11 +87,11 @@ function CreditRunner () {
   this.checkFamilyCredit = function () {
     sleep(1500)
     if (widgetUtils.widgetWaiting('.*家庭积分.*')) {
-      sleep(1000)
+      sleep(3000)
       let target = widgetUtils.widgetGetOne('.*家庭积分.*')
       automator.clickCenter(target)
       sleep(1000)
-      if (widgetUtils.widgetWaiting(".*成员管理.*")) {
+      if (widgetUtils.widgetWaiting(".*家庭积分.*")) {
         this.collectCredits('家庭积分', _family_regex)
       } else {
         logUtils.logInfo(['未找到待领取家庭积分'], true)
