@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-06-29 13:13:04
+ * @Last Modified time: 2020-06-30 18:43:07
  * @Description: 
  */
 
@@ -38,9 +38,25 @@ function CreditRunner () {
     }
   }
 
+  /**
+   * 判断是否有button类型的父控件，避免获取到连续签到之类的数字 导致进入好物时刻等活动页
+   * @param {目标控件} target 
+   */
+  this.hasButtonParent = function (target) {
+    let parent = target.parent()
+    let depthLimit = 4
+    while(parent && depthLimit > 0) {
+      if (parent.className().endsWith('Button')) {
+        return true
+      }
+      parent = parent.parent()
+      depthLimit--
+    }
+  }
+
   this.canCollect = function (val) {
     let bounds = val.bounds()
-    if (bounds && bounds.bottom <= 850) {
+    if (bounds && bounds.bottom <= 850 && this.hasButtonParent(val)) {
       return true
     } else {
       return false
@@ -51,7 +67,8 @@ function CreditRunner () {
     // 等待稳定
     sleep(1000)
     let widgets = widgetUtils.widgetGetAll(regex, null, true)
-    while (widgets) {
+    let collected = true
+    while (widgets && collected) {
       logUtils.logInfo(['总数：{}', widgets.target.length])
       let targets = widgets.target
       let isDesc = widgets.isDesc
@@ -68,9 +85,12 @@ function CreditRunner () {
         }
       })
       logUtils.infoLog(['{} 总共领取：「{}」分', position, totalCollect])
-      sleep(1000)
-      // 再次检测, 缩短检测超时时间为两秒
-      widgets = widgetUtils.widgetGetAll(regex, 2000, true)
+      collected = totalCollect > 0
+      if (collected) {
+        sleep(1000)
+        // 再次检测, 缩短检测超时时间为两秒
+        widgets = widgetUtils.widgetGetAll(regex, 2000, true)
+      }
     }
   }
 
