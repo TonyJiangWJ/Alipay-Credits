@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-07-01 09:19:48
+ * @Last Modified time: 2020-07-01 09:31:14
  * @Description: 
  */
 
@@ -58,7 +58,8 @@ function CreditRunner () {
    * @param {目标控件} bounds 
    */
   this.isCollectableBall = function (bounds) {
-    return bounds.width() / bounds.height() === 1
+    let flag = (bounds.width() / bounds.height()) === 1
+    logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
   }
 
   this.canCollect = function (val) {
