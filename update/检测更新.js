@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2019-12-23 22:54:22
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-05-16 19:14:53
+ * @Last Modified time: 2020-07-01 09:21:36
  * @Description: 
  */
 
@@ -25,7 +25,7 @@ importClass(com.tony.downloader.GithubReleaseDownloader)
 importClass(com.tony.downloader.GiteeReleaseDownloader)
 
 let apiUrl = 'https://api.github.com/repos/TonyJiangWJ/Alipay-Credits/releases/latest'
-let downloader = new Downloader()
+let downloader = new GithubReleaseDownloader()
 if (is_pro) {
   let origin = {}
   let new_object = {}
