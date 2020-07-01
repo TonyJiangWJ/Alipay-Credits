@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-06-30 18:43:07
+ * @Last Modified time: 2020-07-01 09:19:48
  * @Description: 
  */
 
@@ -53,10 +53,17 @@ function CreditRunner () {
       depthLimit--
     }
   }
+  /**
+   * 判断比例 是不是正方形
+   * @param {目标控件} bounds 
+   */
+  this.isCollectableBall = function (bounds) {
+    return bounds.width() / bounds.height() === 1
+  }
 
   this.canCollect = function (val) {
     let bounds = val.bounds()
-    if (bounds && bounds.bottom <= 850 && this.hasButtonParent(val)) {
+    if (bounds && (this.isCollectableBall(bounds) || this.hasButtonParent(val))) {
       return true
     } else {
       return false
