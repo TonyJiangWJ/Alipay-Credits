@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-07-01 09:31:14
+ * @Last Modified time: 2020-07-01 21:05:13
  * @Description: 
  */
 
@@ -60,6 +60,7 @@ function CreditRunner () {
   this.isCollectableBall = function (bounds) {
     let flag = (bounds.width() / bounds.height()) === 1
     logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
+    return flag
   }
 
   this.canCollect = function (val) {
