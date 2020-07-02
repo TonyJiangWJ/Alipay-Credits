@@ -58,7 +58,7 @@ function CreditRunner () {
    * @param {目标控件} bounds 
    */
   this.isCollectableBall = function (bounds) {
-    let flag = (bounds.width() / bounds.height()) === 1
+    let flag = Math.abs(bounds.width() - bounds.height()) <= 5
     logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
     return flag
   }
