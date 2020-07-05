@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-07-01 21:05:13
+ * @Last Modified time: 2020-07-05 22:30:19
  * @Description: 
  */
 
@@ -41,6 +41,7 @@ function CreditRunner () {
   /**
    * 判断是否有button类型的父控件，避免获取到连续签到之类的数字 导致进入好物时刻等活动页
    * @param {目标控件} target 
+   * @deprecated
    */
   this.hasButtonParent = function (target) {
     let parent = target.parent()
@@ -58,14 +59,14 @@ function CreditRunner () {
    * @param {目标控件} bounds 
    */
   this.isCollectableBall = function (bounds) {
-    let flag = Math.abs(bounds.width() - bounds.height()) <= 5
+    let flag = Math.abs(bounds.width() - bounds.height()) <= 5 && bounds.width() > 30
     logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
     return flag
   }
 
   this.canCollect = function (val) {
     let bounds = val.bounds()
-    if (bounds && (this.isCollectableBall(bounds) || this.hasButtonParent(val))) {
+    if (bounds && this.isCollectableBall(bounds)) {
       return true
     } else {
       return false
