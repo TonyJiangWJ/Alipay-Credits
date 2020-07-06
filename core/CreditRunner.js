@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-07-05 22:30:19
+ * @Last Modified time: 2020-07-06 21:23:38
  * @Description: 
  */
 
@@ -13,12 +13,15 @@ let alipayUnlocker = singletonRequire('AlipayUnlocker')
 let widgetUtils = singletonRequire('WidgetUtils')
 let logUtils = singletonRequire('LogUtils')
 let automator = singletonRequire('Automator')
+let floatyUtil = singletonRequire('FloatyUtil')
 
 function CreditRunner () {
 
   let _package_name = 'com.eg.android.AlipayGphone'
   let _family_regex = /^\+(\d+)$/
   let _sign_regex = /^(\d+)$/
+
+  this.collectFamily = false
 
   this.openCreditPage = function () {
     commonFunctions.launchPackage(_package_name, false)
@@ -31,10 +34,19 @@ function CreditRunner () {
       packageName: _package_name
     })
     sleep(500)
+    floatyUtil.setFloatyText('校验是否有打开确认弹框')
     let confirm = widgetUtils.widgetGetOne(/^打开$/, 3000)
     if (confirm) {
       sleep(500)
+      floatyUtil.setFloatyInfo(
+        {
+          x: confirm.bounds().centerX(),
+          y: confirm.bounds().centerY()
+        },
+        '找到了确认打开按钮')
       automator.clickCenter(confirm)
+    } else {
+      floatyUtil.setFloatyText('没有打开确认弹框')
     }
   }
 
@@ -46,7 +58,7 @@ function CreditRunner () {
   this.hasButtonParent = function (target) {
     let parent = target.parent()
     let depthLimit = 4
-    while(parent && depthLimit > 0) {
+    while (parent && depthLimit > 0) {
       if (parent.className().endsWith('Button')) {
         return true
       }
@@ -66,8 +78,12 @@ function CreditRunner () {
 
   this.canCollect = function (val) {
     let bounds = val.bounds()
-    if (bounds && this.isCollectableBall(bounds)) {
-      return true
+    if (bounds) {
+      if (this.collectFamily) {
+        return this.hasButtonParent(val)
+      } else {
+        return this.isCollectableBall(bounds)
+      }
     } else {
       return false
     }
@@ -105,35 +121,61 @@ function CreditRunner () {
   }
 
   this.checkAndCollect = function () {
+    floatyUtil.setFloatyText('等待会员积分控件')
     if (widgetUtils.widgetWaiting(_sign_regex)) {
+      floatyUtil.setFloatyText('等待会员积分控件成功')
       // 等待稳定
       this.collectCredits('会员积分', _sign_regex)
       sleep(1000)
     } else {
+      floatyUtil.setFloatyTextColor('#ff0000')
+      floatyUtil.setFloatyText('未找到待领取积分')
       logUtils.logInfo(['未找到待领取积分'], true)
     }
   }
 
   this.checkFamilyCredit = function () {
+    floatyUtil.setFloatyText('等待家庭积分控件')
     sleep(1500)
     if (widgetUtils.widgetWaiting('.*家庭积分.*')) {
+      floatyUtil.setFloatyText('找到了家庭积分控件，等待3秒')
       sleep(3000)
+      floatyUtil.setFloatyText('找到了家庭积分控件，再次获取控件信息')
       let target = widgetUtils.widgetGetOne('.*家庭积分.*')
+      floatyUtil.setFloatyInfo(
+        {
+          x: target.bounds().centerX(),
+          y: target.bounds().centerY()
+        },
+        '家庭积分')
       automator.clickCenter(target)
       sleep(1000)
+      floatyUtil.setFloatyText('校验是否进入了家庭积分页面')
       if (widgetUtils.widgetWaiting(".*家庭积分.*")) {
+        floatyUtil.setFloatyText('进入家庭积分页面成功')
+        this.collectFamily = true
         this.collectCredits('家庭积分', _family_regex)
       } else {
+        floatyUtil.setFloatyTextColor('#ff0000')
+        floatyUtil.setFloatyText('进入家庭积分页面失败')
         logUtils.logInfo(['未找到待领取家庭积分'], true)
       }
+    } else {
+      floatyUtil.setFloatyText('未找到家庭积分控件')
     }
   }
 
 
   this.exec = function () {
+    floatyUtil.init()
+    floatyUtil.setFloatyPosition(400, 400)
+    floatyUtil.setFloatyText('准备打开领取积分页面')
     this.openCreditPage()
+    floatyUtil.setFloatyText('准备领取积分')
     this.checkAndCollect()
+    floatyUtil.setFloatyText('准备领取家庭积分')
     this.checkFamilyCredit()
+    floatyUtil.setFloatyText('领取完毕')
     commonFunctions.minimize()
   }
 }
