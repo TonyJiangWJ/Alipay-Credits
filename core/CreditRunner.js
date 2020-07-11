@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-07-06 21:23:38
+ * @Last Modified time: 2020-07-11 10:28:15
  * @Description: 
  */
 
@@ -50,43 +50,23 @@ function CreditRunner () {
     }
   }
 
-  /**
-   * 判断是否有button类型的父控件，避免获取到连续签到之类的数字 导致进入好物时刻等活动页
-   * @param {目标控件} target 
-   * @deprecated
-   */
-  this.hasButtonParent = function (target) {
-    let parent = target.parent()
-    let depthLimit = 4
-    while (parent && depthLimit > 0) {
-      if (parent.className().endsWith('Button')) {
-        return true
-      }
-      parent = parent.parent()
-      depthLimit--
-    }
-  }
+
   /**
    * 判断比例 是不是正方形
    * @param {目标控件} bounds 
    */
   this.isCollectableBall = function (bounds) {
-    let flag = Math.abs(bounds.width() - bounds.height()) <= 5 && bounds.width() > 30
-    logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
-    return flag
+    if (bounds) {
+      let flag = Math.abs(bounds.width() - bounds.height()) <= 5 && bounds.width() > 30
+      logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
+      return flag
+    }
+    return false
   }
 
   this.canCollect = function (val) {
     let bounds = val.bounds()
-    if (bounds) {
-      if (this.collectFamily) {
-        return this.hasButtonParent(val)
-      } else {
-        return this.isCollectableBall(bounds)
-      }
-    } else {
-      return false
-    }
+    return this.isCollectableBall(bounds)
   }
 
   this.collectCredits = function (position, regex) {
@@ -138,8 +118,6 @@ function CreditRunner () {
     floatyUtil.setFloatyText('等待家庭积分控件')
     sleep(1500)
     if (widgetUtils.widgetWaiting('.*家庭积分.*')) {
-      floatyUtil.setFloatyText('找到了家庭积分控件，等待3秒')
-      sleep(3000)
       floatyUtil.setFloatyText('找到了家庭积分控件，再次获取控件信息')
       let target = widgetUtils.widgetGetOne('.*家庭积分.*')
       floatyUtil.setFloatyInfo(
@@ -152,13 +130,17 @@ function CreditRunner () {
       sleep(1000)
       floatyUtil.setFloatyText('校验是否进入了家庭积分页面')
       if (widgetUtils.widgetWaiting(".*家庭积分.*")) {
-        floatyUtil.setFloatyText('进入家庭积分页面成功')
+        floatyUtil.setFloatyText('进入家庭积分页面成功，等待3秒福袋动画结束')
+        sleep(3000)
         this.collectFamily = true
         this.collectCredits('家庭积分', _family_regex)
       } else {
         floatyUtil.setFloatyTextColor('#ff0000')
         floatyUtil.setFloatyText('进入家庭积分页面失败')
         logUtils.logInfo(['未找到待领取家庭积分'], true)
+        automator.back()
+        sleep(2000)
+        this.checkFamilyCredit()
       }
     } else {
       floatyUtil.setFloatyText('未找到家庭积分控件')
