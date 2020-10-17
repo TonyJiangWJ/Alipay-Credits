@@ -129,7 +129,7 @@ function CreditRunner () {
       automator.clickCenter(target)
       sleep(1000)
       floatyUtil.setFloatyText('校验是否进入了家庭积分页面')
-      if (widgetUtils.widgetWaiting(".*家庭积分.*")) {
+      if (widgetUtils.widgetWaiting(".*家庭积分.*") || widgetUtils.widgetWaiting(".*家庭共享积分.*")) {
         floatyUtil.setFloatyText('进入家庭积分页面成功，等待3秒福袋动画结束')
         sleep(3000)
         this.collectFamily = true
