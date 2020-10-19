@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-07-11 10:28:15
+ * @Last Modified time: 2020-10-19 21:04:23
  * @Description: 
  */
 
@@ -25,6 +25,7 @@ function CreditRunner () {
 
   this.openCreditPage = function () {
     commonFunctions.launchPackage(_package_name, false)
+    sleep(500)
     if (config.is_alipay_locked) {
       alipayUnlocker.unlockAlipay()
     }
@@ -114,12 +115,16 @@ function CreditRunner () {
     }
   }
 
-  this.checkFamilyCredit = function () {
+  this.checkFamilyCredit = function (limit) {
+    limit = limit || 0
+    if (limit >= 3) {
+      return
+    }
     floatyUtil.setFloatyText('等待家庭积分控件')
     sleep(1500)
-    if (widgetUtils.widgetWaiting('.*家庭积分.*')) {
+    if (widgetUtils.widgetWaiting(config.family_credit_regex || '*家庭(共享)?积分*')) {
       floatyUtil.setFloatyText('找到了家庭积分控件，再次获取控件信息')
-      let target = widgetUtils.widgetGetOne('.*家庭积分.*')
+      let target = widgetUtils.widgetGetOne(config.family_credit_regex || '*家庭(共享)?积分*')
       floatyUtil.setFloatyInfo(
         {
           x: target.bounds().centerX(),
@@ -129,7 +134,7 @@ function CreditRunner () {
       automator.clickCenter(target)
       sleep(1000)
       floatyUtil.setFloatyText('校验是否进入了家庭积分页面')
-      if (widgetUtils.widgetWaiting(".*家庭积分.*")) {
+      if (widgetUtils.widgetWaiting(config.family_credit_regex || '*家庭(共享)?积分*', limit === 0 ? 2000 : null)) {
         floatyUtil.setFloatyText('进入家庭积分页面成功，等待3秒福袋动画结束')
         sleep(3000)
         this.collectFamily = true
@@ -140,7 +145,7 @@ function CreditRunner () {
         logUtils.logInfo(['未找到待领取家庭积分'], true)
         automator.back()
         sleep(2000)
-        this.checkFamilyCredit()
+        this.checkFamilyCredit(limit + 1)
       }
     } else {
       floatyUtil.setFloatyText('未找到家庭积分控件')
