@@ -1,13 +1,14 @@
 /*
  * @Author: TonyJiangWJ
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-05-07 10:43:52
+ * @Last Modified time: 2020-11-12 20:36:41
  * @Description: 
  */
 let { config } = require('./config.js')(runtime, this)
 let singletonRequire = require('./lib/SingletonRequirer.js')(runtime, this)
 let runningQueueDispatcher = singletonRequire('RunningQueueDispatcher')
 let { logInfo, errorInfo, warnInfo, debugInfo, infoLog } = singletonRequire('LogUtils')
+let tryRequestScreenCapture = singletonRequire('TryRequestScreenCapture')
 let commonFunctions = singletonRequire('CommonFunction')
 let automator = singletonRequire('Automator')
 let unlocker = require('./lib/Unlock.js')
@@ -59,7 +60,29 @@ try {
   exit()
 }
 logInfo('解锁成功')
-
+if (config.auto_set_bang_offset || config.updated_temp_flag_1325) {
+  // 首次执行 需要识别刘海高度
+  // 请求截图权限
+  let screenPermission = false
+  let actionSuccess = commonFunctions.waitFor(function () {
+    if (config.request_capture_permission) {
+      screenPermission = tryRequestScreenCapture()
+    } else {
+      screenPermission = requestScreenCapture(false)
+    }
+  }, 15000)
+  if (!actionSuccess || !screenPermission) {
+    errorInfo('请求截图失败, 设置6秒后重启')
+    runningQueueDispatcher.removeRunningTask()
+    sleep(6000)
+    runningQueueDispatcher.executeTargetScript(FileUtils.getRealMainScriptPath())
+    exit()
+  } else {
+    logInfo('请求截屏权限成功')
+  }
+}
+// 自动设置刘海偏移量
+commonFunctions.autoSetUpBangOffset()
 /************************
  * 主程序
  ***********************/

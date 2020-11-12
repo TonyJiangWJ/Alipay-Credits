@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2019-12-09 20:42:08
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-10-19 13:37:30
+ * @Last Modified time: 2020-11-12 20:32:26
  * @Description: 
  */
 'ui';
@@ -52,8 +52,9 @@ let default_config = {
   delayStartTime: 5,
   device_width: device.width,
   device_height: device.height,
-  // 控件文本配置
-  family_credit_regex: '.*家庭(共享)?积分.*'
+  auto_set_bang_offset: true,
+  updated_temp_flag_1325: true,
+  bang_offset: 0
 }
 let CONFIG_STORAGE_NAME = 'alipay_credits_version'
 let PROJECT_NAME = '支付宝领积分'
@@ -176,9 +177,6 @@ if (!isRunningMode) {
 
     // 进阶配置
     ui.singleScriptChkBox.setChecked(config.single_script)
-
-    // 控件文本配置
-    ui.familyCreditRegexInpt.text(config.family_credit_regex)
     setScrollDownUiVal()
     
     setDeviceSizeText()
@@ -333,10 +331,6 @@ if (!isRunningMode) {
               <ScrollView>
                 <vertical padding="12 24">
                   {/* 控件文本配置 */}
-                  <horizontal gravity="center">
-                    <text text="家庭积分控件正则：" layout_weight="20"/>
-                    <input id="familyCreditRegexInpt" inputType="text" layout_weight="80"/>
-                  </horizontal>
                 </vertical>
               </ScrollView>
             </frame>
@@ -583,10 +577,6 @@ if (!isRunningMode) {
       TextWatcherBuilder(text => { config.delayStartTime = parseInt(text) })
     )
     
-    ui.familyCreditRegexInpt.addTextChangedListener(
-      TextWatcherBuilder(text => { config.family_credit_regex = text + '' })
-    )
-
     console.verbose('界面初始化耗时' + (new Date().getTime() - start) + 'ms')
     setTimeout(function () {
       if (loadingDialog !== null) {

@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-10-19 21:04:23
+ * @Last Modified time: 2020-11-12 20:38:09
  * @Description: 
  */
 
@@ -58,7 +58,7 @@ function CreditRunner () {
    */
   this.isCollectableBall = function (bounds) {
     if (bounds) {
-      let flag = Math.abs(bounds.width() - bounds.height()) <= 5 && bounds.width() > 30
+      let flag = Math.abs(bounds.width() - bounds.height()) <= 10 && bounds.width() > 30
       logUtils.debugInfo(['校验控件形状是否符合：[{}, {}] result: {}', bounds.width(), bounds.height(), flag])
       return flag
     }
@@ -115,40 +115,32 @@ function CreditRunner () {
     }
   }
 
-  this.checkFamilyCredit = function (limit) {
-    limit = limit || 0
-    if (limit >= 3) {
-      return
-    }
+  this.checkFamilyCredit = function () {
+    sleep(2000)
     floatyUtil.setFloatyText('等待家庭积分控件')
-    sleep(1500)
-    if (widgetUtils.widgetWaiting(config.family_credit_regex || '*家庭(共享)?积分*')) {
-      floatyUtil.setFloatyText('找到了家庭积分控件，再次获取控件信息')
-      let target = widgetUtils.widgetGetOne(config.family_credit_regex || '*家庭(共享)?积分*')
+    let limit = 5
+    let target = widgetUtils.widgetGetOne(/家庭积分\+\d+/)
+    sleep(200)
+    if (target) {
       floatyUtil.setFloatyInfo(
         {
           x: target.bounds().centerX(),
           y: target.bounds().centerY()
         },
-        '家庭积分')
+        '家庭积分'
+      )
       automator.clickCenter(target)
-      sleep(1000)
-      floatyUtil.setFloatyText('校验是否进入了家庭积分页面')
-      if (widgetUtils.widgetWaiting(config.family_credit_regex || '*家庭(共享)?积分*', limit === 0 ? 2000 : null)) {
+      if (widgetUtils.widgetWaiting('.*家庭共享积分.*', limit === 0 ? 2000 : null)) {
         floatyUtil.setFloatyText('进入家庭积分页面成功，等待3秒福袋动画结束')
-        sleep(3000)
+        sleep(2000)
         this.collectFamily = true
         this.collectCredits('家庭积分', _family_regex)
+        automator.back()
       } else {
         floatyUtil.setFloatyTextColor('#ff0000')
         floatyUtil.setFloatyText('进入家庭积分页面失败')
         logUtils.logInfo(['未找到待领取家庭积分'], true)
-        automator.back()
-        sleep(2000)
-        this.checkFamilyCredit(limit + 1)
       }
-    } else {
-      floatyUtil.setFloatyText('未找到家庭积分控件')
     }
   }
 
@@ -158,10 +150,10 @@ function CreditRunner () {
     floatyUtil.setFloatyPosition(400, 400)
     floatyUtil.setFloatyText('准备打开领取积分页面')
     this.openCreditPage()
-    floatyUtil.setFloatyText('准备领取积分')
-    this.checkAndCollect()
     floatyUtil.setFloatyText('准备领取家庭积分')
     this.checkFamilyCredit()
+    floatyUtil.setFloatyText('准备领取积分')
+    this.checkAndCollect()
     floatyUtil.setFloatyText('领取完毕')
     commonFunctions.minimize()
   }
