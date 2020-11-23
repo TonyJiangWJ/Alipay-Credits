@@ -2,7 +2,7 @@
  * @Author: TonyJiangWJ
  * @Date: 2020-04-25 16:46:06
  * @Last Modified by: TonyJiangWJ
- * @Last Modified time: 2020-11-12 20:38:09
+ * @Last Modified time: 2020-11-23 19:07:22
  * @Description: 
  */
 
@@ -19,7 +19,6 @@ function CreditRunner () {
 
   let _package_name = 'com.eg.android.AlipayGphone'
   let _family_regex = /^\+(\d+)$/
-  let _sign_regex = /^(\d+)$/
 
   this.collectFamily = false
 
@@ -102,24 +101,64 @@ function CreditRunner () {
   }
 
   this.checkAndCollect = function () {
+    floatyUtil.setFloatyTextColor('#00ff00')
     floatyUtil.setFloatyText('等待会员积分控件')
-    if (widgetUtils.widgetWaiting(_sign_regex)) {
-      floatyUtil.setFloatyText('等待会员积分控件成功')
-      // 等待稳定
-      this.collectCredits('会员积分', _sign_regex)
+    let target = widgetUtils.widgetGetOne(/^\s*今日签到.*(\d+)$/)
+    if (target) {
+      floatyUtil.setFloatyInfo(
+        {
+          x: target.bounds().centerX(),
+          y: target.bounds().centerY()
+        },
+        '等待会员积分控件成功，准备进入签到页面'
+      )
+      automator.clickCenter(target)
       sleep(1000)
+      target = widgetUtils.widgetGetOne('签到领积分')
+      if (target) {
+        floatyUtil.setFloatyInfo(
+          {
+            x: target.bounds().centerX(),
+            y: target.bounds().centerY()
+          },
+          '进入签到页面成功'
+        )
+        sleep(200)
+        automator.clickCenter(target)
+        sleep(500)
+        automator.back()
+      }
     } else {
       floatyUtil.setFloatyTextColor('#ff0000')
       floatyUtil.setFloatyText('未找到待领取积分')
       logUtils.logInfo(['未找到待领取积分'], true)
     }
+    sleep(500)
+    floatyUtil.setFloatyTextColor('#00ff00')
+    floatyUtil.setFloatyText('检测是否有今日支付积分')
+    // 今日支付积分
+    target = widgetUtils.widgetGetOne('全部领取')
+    if (target) {
+      floatyUtil.setFloatyInfo(
+        {
+          x: target.bounds().centerX(),
+          y: target.bounds().centerY()
+        },
+        '找到了支付积分，准备收取'
+      )
+      automator.clickCenter(target)
+    } else {
+      floatyUtil.setFloatyTextColor('#ff0000')
+      floatyUtil.setFloatyText('未找到今日支付积分')
+    }
+    sleep(500)
   }
 
   this.checkFamilyCredit = function () {
     sleep(2000)
     floatyUtil.setFloatyText('等待家庭积分控件')
     let limit = 5
-    let target = widgetUtils.widgetGetOne(/家庭积分\+\d+/)
+    let target = widgetUtils.widgetGetOne(/家庭积分.*\d+|家庭积分待领取/)
     sleep(200)
     if (target) {
       floatyUtil.setFloatyInfo(
@@ -141,7 +180,10 @@ function CreditRunner () {
         floatyUtil.setFloatyText('进入家庭积分页面失败')
         logUtils.logInfo(['未找到待领取家庭积分'], true)
       }
+    } else {
+      floatyUtil.setFloatyText('未找到待领取的家庭积分')
     }
+    sleep(500)
   }
 
 
