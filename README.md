@@ -1,11 +1,13 @@
 
-# 蚂蚁积分签到
+# 蚂蚁积分签到 此项目已废弃，不再开发 签到已经整合到了聚合签到中
+
+- [聚合签到脚本传送门](https://github.com/TonyJiangWJ/Unify-Sign)
 
 ## 其他脚本
 
 - [蚂蚁森林脚本传送门](https://github.com/TonyJiangWJ/Ant-Forest)
 - [蚂蚁庄园脚本传送门](https://github.com/TonyJiangWJ/Ant-Manor)
-- [京东签到脚本传送门](https://github.com/TonyJiangWJ/JingDongBeans)
+- [聚合签到脚本传送门](https://github.com/TonyJiangWJ/Unify-Sign)
 
 ## 基于AutoJS实现的自动领取支付宝积分脚本
 
